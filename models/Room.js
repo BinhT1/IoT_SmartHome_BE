@@ -13,9 +13,9 @@ const Room = new mongoose.Schema(
     },
     name: String,
     connect: Array,
-    humidity: Array,
-    temperature: Array,
-    lightIntensity: Array,
+    humidity: Number,
+    temperature: Number,
+    lightIntensity: Number,
   },
   {
     timestamps: true,

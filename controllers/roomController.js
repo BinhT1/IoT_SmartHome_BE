@@ -140,6 +140,29 @@ const roomController = {
       })
     }
   },
+  updateData: async (data) => {
+    try {
+      const { roomId, humidity, temperature, lightIntensity } = data
+
+      const room = await Room.findOne({
+        roomId: roomId,
+      })
+
+      if (room) {
+        await room.updateOne({
+          humidity: humidity,
+          temperature: temperature,
+          lightIntensity: lightIntensity,
+        })
+      }
+    } catch (err) {
+      console.log({
+        result: 'fail',
+        message: 'Không thể cập nhập dữ liệu cho phòng',
+        reason: err.message,
+      })
+    }
+  },
 }
 
 module.exports = roomController

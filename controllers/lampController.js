@@ -1,23 +1,28 @@
-const Lamp = require('../models/Lamp')
-const Room = require('../models/Room')
-const Window = require('../models/Window')
+const mqtt = require('mqtt');
+const Lamp = require('../models/Lamp');
+const Room = require('../models/Room');
+const broker = 'mqtt://broker.mqttdashboard.com:1883';
+const options = {};
+const topic = 'BINH.NB194231_SERVER';
+
+const client = mqtt.connect(broker, options);
 
 const lampController = {
   create: async (req, res) => {
     try {
-      const { name, lampOrder, roomId } = req.body
+      const { name, lampOrder, roomId } = req.body;
 
-      const room = req.room
+      const room = req.room;
 
       // check lampOrder exist
-      const roomConnect = room.connect
+      const roomConnect = room.connect;
 
       for (var i = 0; i < roomConnect.length; i++) {
         if (roomConnect[i] == lampOrder.toString()) {
           return res.status(400).send({
             result: 'fail',
             message: 'Chân đèn đã tồn tại',
-          })
+          });
         }
       }
 
@@ -29,9 +34,9 @@ const lampController = {
         mode: 'manual',
         timerMode: [],
         autoMode: [],
-      })
+      });
 
-      await newLamp.save()
+      await newLamp.save();
 
       await Room.findOneAndUpdate(
         {
@@ -40,41 +45,258 @@ const lampController = {
         {
           connect: room.connect.push(lampOrder.toString()),
         },
-      )
+      );
 
       res.status(200).json({
         result: 'success',
         plant: newLamp,
-      })
+      });
     } catch (err) {
       return res.status(500).send({
         result: 'fail',
         message: err.message,
-      })
+      });
     }
   },
 
   changeName: async (req, res) => {
-    const { name, lampId } = req.body
+    try {
+      const { name, lampId } = req.body;
 
-    const lampAfter = await Lamp.findOneAndUpdate(
-      {
-        lampId: lampId,
-      },
-      {
-        name: name,
-      },
-    )
+      const lampAfter = await Lamp.findOneAndUpdate(
+        {
+          lampId: lampId,
+        },
+        {
+          name: name,
+        },
+      );
 
-    res.status(200).send({
-      result: 'success',
-      lamp: lampAfter,
-    })
+      res.status(200).send({
+        result: 'success',
+        lamp: lampAfter,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        result: 'fail',
+        message: err.message,
+      });
+    }
   },
 
   changeMode: async (req, res) => {
-    const { lampId, mode } = req.body
+    try {
+      const { lampId, mode } = req.body;
 
-    //mqtt send change mode
+      if (mode != 'manual' && mode != 'timer' && mode != 'auto') {
+        return res.status(400).send({
+          result: 'fail',
+          message: 'mode không phải là một trong 3 TH: manual, timer, auto',
+        });
+      }
+
+      //mqtt send change mode
+
+      client.publish(
+        topic,
+        JSON.stringify({
+          command: 'lamp-change-mode',
+          mode: mode,
+          lampOrder:
+            parseInt(lampId.slice(17, 19)) > 9
+              ? parseInt(lampId.slice(-2))
+              : parseInt(lampId.slice(-1)),
+          roomId:
+            parseInt(lampId.slice(17, 19)) > 9
+              ? lampId.slice(0, plantId.length - 2)
+              : lampId.slice(0, plantId.length - 1),
+        }),
+        (err) => {
+          if (err) {
+            return console.log({
+              result: 'failed',
+              message: err.message,
+            });
+          } else {
+            console.log({
+              result: 'success',
+              message: `Yêu cầu change-mode: ${mode} đã được gửi`,
+            });
+          }
+        },
+      );
+
+      await Lamp.findOneAndUpdate(
+        {
+          lampId: lampId,
+        },
+        {
+          mode: mode,
+        },
+      );
+
+      res.status(200).send({
+        result: 'success',
+        message: `lamp-change-mode thành công: ${mode}: ${lampId}`,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        result: 'fail',
+        message: err.message,
+      });
+    }
   },
-}
+
+  controlManual: async (req, res) => {
+    try {
+      const { lampId, control } = req.body;
+      client.publish(
+        topic,
+        JSON.stringify({
+          command: 'lamp-control-manual',
+          control: control,
+          lampOrder:
+            parseInt(lampId.slice(17, 19)) > 9
+              ? parseInt(lampId.slice(-2))
+              : parseInt(lampId.slice(-1)),
+          roomId:
+            parseInt(lampId.slice(17, 19)) > 9
+              ? lampId.slice(0, plantId.length - 2)
+              : lampId.slice(0, plantId.length - 1),
+        }),
+        (err) => {
+          if (err) {
+            return console.log({
+              result: 'failed',
+              message: err.message,
+            });
+          } else {
+            console.log({
+              result: 'success',
+              message: `Yêu cầu lamp-control-manual: ${control}: ${lampId} đã được gửi`,
+            });
+          }
+        },
+      );
+
+      await Lamp.findOneAndUpdate({ lampId: lampId }, { status: control });
+      res.status(200).send({
+        result: 'success',
+        message: `Yêu cầu điều khiển đèn đã được gửi: ${control}`,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        result: 'fail',
+        message: err.message,
+      });
+    }
+  },
+
+  changeAutoModeBreakpoint: async (req, res) => {
+    try {
+      const { lampId, breakpoint } = req.body;
+      client.publish(
+        topic,
+        JSON.stringify({
+          command: 'lamp-control-change-breakpoint',
+          breakpoint: breakpoint,
+          lampOrder:
+            parseInt(lampId.slice(17, 19)) > 9
+              ? parseInt(lampId.slice(-2))
+              : parseInt(lampId.slice(-1)),
+          roomId:
+            parseInt(lampId.slice(17, 19)) > 9
+              ? lampId.slice(0, plantId.length - 2)
+              : lampId.slice(0, plantId.length - 1),
+        }),
+        (err) => {
+          if (err) {
+            return console.log({
+              result: 'failed',
+              message: err.message,
+            });
+          } else {
+            console.log({
+              result: 'success',
+              message: `Yêu cầu lamp-control-change-breakpoint: ${breakpoint}: ${lampId} đã được gửi`,
+            });
+          }
+        },
+      );
+      await Lamp.findOneAndUpdate({ lampId: lampId }, { breakpoint: breakpoint });
+      res.status(200).send({
+        result: 'success',
+        message: `Thay đổi breakpoint thành công: ${breakpoint}`,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        result: 'fail',
+        message: err.message,
+      });
+    }
+  },
+
+  changeTimers: async (req, res) => {
+    try {
+      const { lampId, timers } = req.body;
+      client.publish(
+        topic,
+        JSON.stringify({
+          command: 'lamp-control-change-timer',
+          timers: timers,
+          lampOrder:
+            parseInt(lampId.slice(17, 19)) > 9
+              ? parseInt(lampId.slice(-2))
+              : parseInt(lampId.slice(-1)),
+          roomId:
+            parseInt(lampId.slice(17, 19)) > 9
+              ? lampId.slice(0, plantId.length - 2)
+              : lampId.slice(0, plantId.length - 1),
+        }),
+        (err) => {
+          if (err) {
+            return console.log({
+              result: 'failed',
+              message: err.message,
+            });
+          } else {
+            console.log({
+              result: 'success',
+              message: `Yêu cầu lamp-control-change-timer: ${timers}: ${lampId} đã được gửi`,
+            });
+          }
+        },
+      );
+      await Lamp.findOneAndUpdate({ lampId: lampId }, { timers: timers });
+      res.status(200).send({
+        result: 'success',
+        message: `Thay đổi timers thành công: ${timers}`,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        result: 'fail',
+        message: err.message,
+      });
+    }
+  },
+
+  delete: async (req, res) => {
+    try {
+      const { lampId } = req.body;
+      await Lamp.deleteOne({
+        lampId: lampId,
+      });
+      res.status(200).send({
+        result: 'success',
+        message: `Xớa đèn thành công: ${lampId}`,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        result: 'fail',
+        message: err.message,
+      });
+    }
+  },
+};
+
+module.exports = lampController;

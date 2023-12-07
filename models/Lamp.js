@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const Lamp = new mongoose.Schema(
   {
@@ -9,19 +9,22 @@ const Lamp = new mongoose.Schema(
     },
     name: String,
     roomId: String,
-    status: Boolean,
+    status: {
+      type: Boolean,
+      default: false,
+    },
     mode: {
       type: String,
       enum: ['manual', 'timer', 'auto'],
       default: 'manual',
     },
 
-    timerMode: [],
-    autoMode: [],
+    timers: [],
+    breakpoint: number,
   },
   {
     timestamps: true,
   },
-)
+);
 
-module.exports = mongoose.model('lamp', Lamp)
+module.exports = mongoose.model('lamp', Lamp);

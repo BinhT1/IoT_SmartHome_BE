@@ -8,7 +8,7 @@ const http = require('http');
 const userRouter = require('./routers/userRouter');
 const roomRouter = require('./routers/roomRouter');
 
-const connectMQTT = require('./utils/mqtt');
+const connectMQTTAndSubcribe = require('./utils/mqtt');
 const { bindHttpServer } = require('./utils/websocket');
 
 dotenv.config();
@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 db.connectDb();
 
 // mqtt connect
-connectMQTT('DUNGNA_SENDING');
+connectMQTTAndSubcribe('BINH.NB194231_ESP32');
 
 // use middlewire
 

@@ -7,7 +7,7 @@ const options = {};
 
 const broker = 'mqtt://broker.mqttdashboard.com:1883';
 
-const connectMQTT = (topic) => {
+const connectMQTTAndSubcribe = (topic) => {
   try {
     const client = mqtt.connect(broker, options);
 
@@ -35,4 +35,4 @@ const connectMQTT = (topic) => {
   }
 };
 
-module.exports = connectMQTT;
+module.exports = connectMQTTAndSubcribe;

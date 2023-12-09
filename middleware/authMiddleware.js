@@ -9,7 +9,7 @@ const auth = async (req, res, next) => {
     })
 
     if (!user) {
-      res.send({
+      res.status(403).send({
         result: 'fail',
         message: 'Auth Middleware: token không hợp lệ',
       })

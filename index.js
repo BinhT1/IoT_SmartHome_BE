@@ -7,6 +7,8 @@ const http = require('http');
 
 const userRouter = require('./routers/userRouter');
 const roomRouter = require('./routers/roomRouter');
+const lampRouter = require('./routers/lampRouter');
+const windowRouter = require('./routers/windowRouter');
 
 const connectMQTTAndSubcribe = require('./utils/mqtt');
 const { bindHttpServer } = require('./utils/websocket');
@@ -32,11 +34,10 @@ connectMQTTAndSubcribe('BINH.NB194231_ESP32');
 
 // router here
 
-app.use(userRouter, function (req, res, next) {
-  next();
-});
-
+app.use(userRouter);
 app.use(roomRouter);
+app.use(lampRouter);
+app.use(windowRouter);
 
 app.use('/', function (req, res, next) {
   res.status(200).json({

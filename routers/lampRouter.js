@@ -12,6 +12,9 @@ router.post('/api/v1/lamp/create', auth, room, lampController.create);
 //change name
 router.post('/api/v1/lamp/change-name', auth, lamp, lampController.changeName);
 
+//control manual
+router.post('/api/v1/lamp/control-manual', auth, lamp, lampController.controlManual);
+
 //change mode
 router.post('/api/v1/lamp/change-mode', auth, lamp, lampController.changeMode);
 
@@ -23,3 +26,5 @@ router.post('/api/v1/lamp/change-timers', auth, lamp, lampController.changeTimer
 
 //delete lamp
 router.delete('/api/v1/lamp/delete', auth, lamp, lampController.delete);
+
+module.exports = router;

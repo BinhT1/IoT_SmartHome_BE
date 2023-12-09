@@ -155,17 +155,22 @@ const roomController = {
     try {
       const { roomId, humidity, temperature, lightIntensity } = data;
 
-      const room = await Room.findOne({
-        roomId: roomId,
-      });
-
-      if (room) {
-        await room.updateOne({
+      data = {
+        roomId: 123,
+        humidity: 123,
+        temperature: 30,
+          
+      }
+      await Room.findOneAndUpdate(
+        {
+          roomId: roomId,
+        },
+        {
           humidity: humidity,
           temperature: temperature,
           lightIntensity: lightIntensity,
-        });
-      }
+        },
+      );
     } catch (err) {
       console.log({
         result: 'fail',

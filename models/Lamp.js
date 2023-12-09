@@ -20,7 +20,10 @@ const Lamp = new mongoose.Schema(
     },
 
     timers: [],
-    breakpoint: number,
+    breakpoint: {
+      type: String,
+      default: -1,
+    },
   },
   {
     timestamps: true,

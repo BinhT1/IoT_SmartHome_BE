@@ -1,6 +1,7 @@
 const mqtt = require('mqtt');
 const Lamp = require('../models/Lamp');
 const Room = require('../models/Room');
+const { removeExist } = require('../utils');
 const broker = 'mqtt://broker.mqttdashboard.com:1883';
 const options = {};
 const topic = 'BINH.NB194231_SERVER';
@@ -33,8 +34,30 @@ const lampController = {
         status: false,
         mode: 'manual',
         timerMode: [],
-        autoMode: [],
+        autoMode: -1,
       });
+
+      client.publish(
+        topic,
+        JSON.stringify({
+          command: 'lamp-create',
+          lampOrder: lampOrder,
+          roomId: roomId,
+        }),
+        (err) => {
+          if (err) {
+            return console.log({
+              result: 'failed',
+              message: err.message,
+            });
+          } else {
+            console.log({
+              result: 'success',
+              message: `Yêu cầu lamp-create: ${roomId} ${lampOrder} đã được gửi`,
+            });
+          }
+        },
+      );
 
       await newLamp.save();
 
@@ -49,7 +72,7 @@ const lampController = {
 
       res.status(200).json({
         result: 'success',
-        plant: newLamp,
+        lamp: newLamp,
       });
     } catch (err) {
       return res.status(500).send({
@@ -62,6 +85,13 @@ const lampController = {
   changeName: async (req, res) => {
     try {
       const { name, lampId } = req.body;
+
+      if (!name) {
+        return res.status(400).send({
+          result: 'fail',
+          message: 'thiếu tham số name',
+        });
+      }
 
       const lampAfter = await Lamp.findOneAndUpdate(
         {
@@ -283,9 +313,44 @@ const lampController = {
   delete: async (req, res) => {
     try {
       const { lampId } = req.body;
+      const room = req.room;
+
+      const lampOrder =
+        parseInt(lampId.slice(17, 19)) > 9
+          ? parseInt(lampId.slice(-2))
+          : parseInt(lampId.slice(-1));
+      client.publish(
+        topic,
+        JSON.stringify({
+          command: 'lamp-delete',
+          lampOrder: lampOrder,
+          roomId: room.roomId,
+        }),
+        (err) => {
+          if (err) {
+            return console.log({
+              result: 'failed',
+              message: err.message,
+            });
+          } else {
+            console.log({
+              result: 'success',
+              message: `Yêu cầu lamp-delete: ${room.roomId} ${lampOrder} đã được gửi`,
+            });
+          }
+        },
+      );
       await Lamp.deleteOne({
         lampId: lampId,
       });
+      await Room.findOneAndUpdate(
+        {
+          roomId: room.roomId,
+        },
+        {
+          connect: removeExist(room.connect, lampOrder),
+        },
+      );
       res.status(200).send({
         result: 'success',
         message: `Xớa đèn thành công: ${lampId}`,

@@ -1,7 +1,7 @@
-const moment = require("moment");
-const _ = require("lodash");
-const crypto = require("crypto");
-const sha256 = require("js-sha256");
+const moment = require('moment');
+const _ = require('lodash');
+const crypto = require('crypto');
+const sha256 = require('js-sha256');
 
 const utils = {
   /**
@@ -42,7 +42,7 @@ const utils = {
    * @returns
    */
   generateRandomStr(size = 32) {
-    return crypto.randomBytes(size).toString("hex");
+    return crypto.randomBytes(size).toString('hex');
   },
 
   // sha256
@@ -52,17 +52,21 @@ const utils = {
 
   // Check object empty
   isObjectEmpty: (obj) => {
-    return (
-      utils.isObjectNull(obj) ||
-      (Object.keys(obj).length === 0 && obj.constructor === Object)
-    );
+    return utils.isObjectNull(obj) || (Object.keys(obj).length === 0 && obj.constructor === Object);
   },
 
   // Check object null|undefine
   isObjectNull: (obj) => {
-    return (
-      obj === null || obj === undefined || obj === "NULL" || obj === "null"
-    );
+    return obj === null || obj === undefined || obj === 'NULL' || obj === 'null';
+  },
+
+  // remove exist value in aray
+  removeExist: (arr, value) => {
+    var index = arr.indexOf(value);
+    if (index > -1) {
+      arr.splice(index, 1);
+    }
+    return arr;
   },
 };
 

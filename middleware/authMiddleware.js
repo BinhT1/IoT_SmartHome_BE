@@ -1,27 +1,27 @@
-const User = require('../models/User')
+const User = require('../models/User');
 
 const auth = async (req, res, next) => {
   try {
-    const accessToken = req.headers.authorization.split(' ')[1]
+    const accessToken = req.headers.authorization.split(' ')[1];
 
     const user = await User.findOne({
       accessToken: accessToken,
-    })
+    });
 
     if (!user) {
-      res.status(403).send({
+      res.status(401).send({
         result: 'fail',
         message: 'Auth Middleware: token không hợp lệ',
-      })
+      });
     } else {
-      req.user = user
+      req.user = user;
     }
-    next()
+    next();
   } catch (err) {
     res.status(500).send({
       result: 'fail',
       error: err.message,
-    })
+    });
   }
-}
-module.exports = auth
+};
+module.exports = auth;

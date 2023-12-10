@@ -1,9 +1,9 @@
-const User = require("../models/User");
-const utils = require("../utils/index");
-const jwt = require("jsonwebtoken");
-const sendEmail = require("../utils/nodeMailer");
-const { isError } = require("lodash");
-const moment = require("moment");
+const User = require('../models/User');
+const utils = require('../utils/index');
+const jwt = require('jsonwebtoken');
+const sendEmail = require('../utils/nodeMailer');
+const { isError } = require('lodash');
+const moment = require('moment');
 
 const userController = {
   signUp: async (req, res) => {
@@ -16,8 +16,8 @@ const userController = {
 
       if (user) {
         return res.send({
-          result: "fail",
-          message: "Email đã được đăng ký",
+          result: 'fail',
+          message: 'Email đã được đăng ký',
         });
       }
 
@@ -36,12 +36,12 @@ const userController = {
       await newUser.save();
 
       return res.send({
-        result: "success",
+        result: 'success',
         user: newUser,
       });
     } catch (error) {
       res.status(500).send({
-        result: "fail",
+        result: 'fail',
         error: error.message,
       });
       console.log(error);
@@ -79,9 +79,9 @@ const userController = {
         email: req.body.email,
       });
       if (!user) {
-        return res.status(404).json({
-          result: "fail",
-          reason: "Tài khoản không tồn tại",
+        return res.status(400).json({
+          result: 'fail',
+          reason: 'Tài khoản không tồn tại',
         });
       }
 
@@ -89,18 +89,15 @@ const userController = {
       const validPassword = hashed === user.password;
 
       if (!validPassword) {
-        return res.status(404).json({
-          result: "fail",
-          reason: "Sai mật khẩu",
+        return res.status(400).json({
+          result: 'fail',
+          reason: 'Sai mật khẩu',
         });
       }
 
       let responseUser;
 
-      var token = await jwt.sign(
-        { email: req.body.email },
-        process.env.JWT_KEY
-      );
+      var token = await jwt.sign({ email: req.body.email }, process.env.JWT_KEY);
 
       var expirationDate = new Date();
 
@@ -110,39 +107,37 @@ const userController = {
 
       var setTime = expirationDate.setTime(time1);
 
-      var expirationDateStr = moment(setTime)
-        .format("YYYY-MM-DD HH:mm:ss")
-        .toString();
+      var expirationDateStr = moment(setTime).format('YYYY-MM-DD HH:mm:ss').toString();
       responseUser = await User.findByIdAndUpdate(
         user.id,
         {
           accessToken: token,
           expirationDateToken: expirationDateStr,
         },
-        { new: true }
+        { new: true },
       );
 
       return res.send({
-        result: "success",
+        result: 'success',
         user: responseUser,
       });
     } catch (error) {
       res.status(500).send({
-        result: "fail",
+        result: 'fail',
         error: isError.message,
       });
     }
   },
   signOut: async (req, res) => {
     try {
-      const accessToken = req.headers.authorization.split(" ")[1];
+      const accessToken = req.headers.authorization.split(' ')[1];
       const user = await User.findOne({
         accessToken: accessToken,
       });
       if (!user) {
-        return res.status(403).send({
-          result: "fail",
-          message: "Không đủ quyền truy cập",
+        return res.status(401).send({
+          result: 'fail',
+          message: 'Không đủ quyền truy cập',
         });
       }
       await user.updateOne({
@@ -151,11 +146,11 @@ const userController = {
       });
 
       res.send({
-        result: "success",
+        result: 'success',
       });
     } catch (error) {
       res.status(500).send({
-        result: "fail",
+        result: 'fail',
         error: error.message,
       });
     }
@@ -171,17 +166,15 @@ const userController = {
 
       if (!user) {
         return res.send({
-          result: "fail",
-          message: "email không hợp lệ",
+          result: 'fail',
+          message: 'email không hợp lệ',
         });
       }
       var random = 100000 + Math.random() * 900000;
 
       var plainResetPasswordToken = Math.floor(random);
 
-      const hasedResetPasswordToken = await utils.sha256(
-        plainResetPasswordToken.toString()
-      );
+      const hasedResetPasswordToken = await utils.sha256(plainResetPasswordToken.toString());
 
       await User.findOneAndUpdate(
         {
@@ -189,22 +182,18 @@ const userController = {
         },
         {
           password: hasedResetPasswordToken,
-        }
+        },
       );
 
-      await sendEmail(
-        email,
-        "Đặt lại mật khẩu SmartHome",
-        plainResetPasswordToken
-      );
+      await sendEmail(email, 'Đặt lại mật khẩu SmartHome', plainResetPasswordToken);
 
       res.send({
-        result: "success",
+        result: 'success',
       });
     } catch (error) {
       console.log(error);
       res.status(500).send({
-        result: "fail",
+        result: 'fail',
         error: error.message,
       });
     }
@@ -222,8 +211,8 @@ const userController = {
 
       if (!user) {
         return res.send({
-          resutl: "fail",
-          message: "Đổi mật khẩu không thành công, không tìm thấy",
+          resutl: 'fail',
+          message: 'Đổi mật khẩu không thành công, không tìm thấy',
         });
       }
 
@@ -235,16 +224,16 @@ const userController = {
           {
             resetPasswordToken: null,
             password: hashedPassword,
-          }
+          },
         );
         return res.send({
-          result: "success",
-          message: "Thay đổi mật khẩu thành công",
+          result: 'success',
+          message: 'Thay đổi mật khẩu thành công',
         });
       }
     } catch (error) {
       res.status(500).send({
-        result: "fail",
+        result: 'fail',
         error: error.message,
       });
     }
@@ -252,7 +241,7 @@ const userController = {
 
   changePassword: async (req, res) => {
     try {
-      const accessToken = req.headers.authorization.split(" ")[1];
+      const accessToken = req.headers.authorization.split(' ')[1];
 
       const user = await User.findOne({
         accessToken: accessToken,
@@ -267,22 +256,22 @@ const userController = {
             password: newPassword,
           });
           return res.send({
-            result: "success",
-            message: "Đổi mật khẩu thành công",
+            result: 'success',
+            message: 'Đổi mật khẩu thành công',
           });
         }
         return res.send({
-          result: "fail",
-          message: "Mật khẩu cũ không chính xác",
+          result: 'fail',
+          message: 'Mật khẩu cũ không chính xác',
         });
       }
       return res.send({
-        result: "fail",
-        message: "Sai email",
+        result: 'fail',
+        message: 'Sai email',
       });
     } catch (error) {
       res.status(500).send({
-        result: "fail",
+        result: 'fail',
         error: error.message,
       });
     }

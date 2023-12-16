@@ -5,7 +5,7 @@ const { connections } = require('./websocket');
 
 const options = {};
 
-const broker = 'mqtt://broker.mqttdashboard.com:1883';
+const broker = 'mqtt://broker.emqx.io:1883';
 
 const connectMQTTAndSubcribe = (topic) => {
   try {
@@ -16,6 +16,7 @@ const connectMQTTAndSubcribe = (topic) => {
       client.subscribe(topic);
     });
     client.on('message', (tp, msg) => {
+      console.log(msg);
       var data = JSON.parse(msg);
 
       console.log('Received MQTT msg: ', data);

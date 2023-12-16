@@ -2,6 +2,7 @@ const mqtt = require('mqtt');
 const Lamp = require('../models/Lamp');
 const Room = require('../models/Room');
 const { removeExist } = require('../utils');
+const lamp = require('../middleware/lampMiddleware');
 const broker = 'mqtt://broker.mqttdashboard.com:1883';
 const options = {};
 const topic = 'BINH.NB194231_SERVER';
@@ -17,6 +18,21 @@ const lampController = {
 
       // check lampOrder exist
       const roomConnect = room.connect;
+
+      var lamps = await Lamp.find({
+        roomId: roomId,
+      });
+
+      if (lamps) {
+        lamps.forEach((element) => {
+          if (element.name == name) {
+            return res.status(400).send({
+              result: 'fail',
+              message: 'Tên đèn đã tồn tại',
+            });
+          }
+        });
+      }
 
       for (var i = 0; i < roomConnect.length; i++) {
         if (roomConnect[i] == lampOrder.toString()) {

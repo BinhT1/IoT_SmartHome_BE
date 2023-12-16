@@ -90,9 +90,11 @@ const roomController = {
 
       return res.status(200).json({
         result: 'success',
-        room: room,
-        lamps: lamps,
-        windows: windows,
+        data: {
+          room: room,
+          lamps: lamps,
+          windows: windows,
+        },
       });
     } catch (err) {
       res.status(500).send({
@@ -159,8 +161,7 @@ const roomController = {
         roomId: 123,
         humidity: 123,
         temperature: 30,
-          
-      }
+      };
       await Room.findOneAndUpdate(
         {
           roomId: roomId,

@@ -12,7 +12,7 @@ router.post('/api/v1/room/create', auth, roomController.createRoom);
 router.get('/api/v1/room/get-all', auth, roomController.getAll);
 
 //detail room and lamps, windows inside
-router.get('/api/v1/room/detail', auth, room, roomController.detail);
+router.post('/api/v1/room/detail', auth, room, roomController.detail);
 
 //update
 router.put('/api/v1/room/update', auth, room, roomController.update);

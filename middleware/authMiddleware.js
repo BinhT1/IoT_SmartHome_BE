@@ -9,14 +9,14 @@ const auth = async (req, res, next) => {
     });
 
     if (!user) {
-      res.status(401).send({
+      return res.status(401).send({
         result: 'fail',
         message: 'Auth Middleware: token không hợp lệ',
       });
     } else {
       req.user = user;
+      next();
     }
-    next();
   } catch (err) {
     res.status(500).send({
       result: 'fail',

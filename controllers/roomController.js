@@ -39,9 +39,9 @@ const roomController = {
         roomId: roomId,
         name: name,
         connect: [],
-        humidity: [],
-        temperature: [],
-        lightIntensity: [],
+        humidity: null,
+        temperature: null,
+        lightIntensity: null,
       });
 
       await newRoom.save();

@@ -7,7 +7,10 @@ const Lamp = new mongoose.Schema(
       require: true,
       unique: true,
     },
-    name: String,
+    name: {
+      type: String,
+      unique: true,
+    },
     roomId: String,
     status: {
       type: Boolean,
@@ -21,7 +24,7 @@ const Lamp = new mongoose.Schema(
 
     timers: [],
     breakpoint: {
-      type: String,
+      type: Number,
       default: -1,
     },
   },

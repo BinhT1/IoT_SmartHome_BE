@@ -24,14 +24,14 @@ const lampController = {
       });
 
       if (lamps) {
-        lamps.forEach((element) => {
-          if (element.name == name) {
+        for (const lamp of lamps) {
+          if (lamp.name == name) {
             return res.status(400).send({
               result: 'fail',
               message: 'Tên đèn đã tồn tại',
             });
           }
-        });
+        }
       }
 
       for (var i = 0; i < roomConnect.length; i++) {
@@ -82,11 +82,11 @@ const lampController = {
           roomId: roomId,
         },
         {
-          connect: room.connect.push(lampOrder.toString()),
+          connect: [...room.connect, lampOrder],
         },
       );
 
-      res.status(200).json({
+      return res.status(200).json({
         result: 'success',
         lamp: newLamp,
       });
@@ -372,7 +372,7 @@ const lampController = {
       );
       res.status(200).send({
         result: 'success',
-        message: `Xớa đèn thành công: ${lampId}`,
+        message: `Xoá đèn thành công: ${lampId}`,
       });
     } catch (err) {
       return res.status(500).send({

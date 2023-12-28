@@ -12,14 +12,8 @@ const windowController = {
   create: async (req, res) => {
     try {
       const { name, windowOrder, roomId, distanceSensorOrder, height } = req.body;
-
-      if (
-        name == '' ||
-        isObjectEmpty(name) ||
-        isObjectEmpty(height) ||
-        height == 0 ||
-        typeof height == 'string'
-      ) {
+      console.log(typeof height);
+      if (name == '' || isObjectEmpty(name) || isObjectEmpty(height) || height == 0) {
         return res.status(400).send({
           result: 'fail',
           message: 'Sai kiểu dữ liệu ',
@@ -85,7 +79,10 @@ const windowController = {
           roomId: roomId,
         },
         {
-          connect: room.connect.push(windowOrder, distanceSensorOrder),
+          connect: [...room.connect, windowOrder, distanceSensorOrder],
+        },
+        {
+          new: true,
         },
       );
 
@@ -137,7 +134,7 @@ const windowController = {
             } else {
               console.log({
                 result: 'success',
-                message: `Yêu cầu window-change-height: ${room.roomId} ${windowOrder} đã được gửi`,
+                message: `Yêu cầu window-change-height: ${room.roomId} ${windowId} đã được gửi`,
               });
             }
           },
@@ -152,6 +149,7 @@ const windowController = {
           name: name,
           height: height,
         },
+        { new: true },
       );
       res.status(200).send({
         result: 'success',
@@ -256,7 +254,7 @@ const windowController = {
         },
       );
 
-      // await Window.findOneAndUpdate({ windowId: windowId }, { status: status });
+      await Window.findOneAndUpdate({ windowId: windowId }, { status: status });
       res.status(200).send({
         result: 'success',
         message: `Yêu cầu điều khiển rềm cửa đã được gửi: ${status}`,
@@ -270,12 +268,12 @@ const windowController = {
   },
   changeAutoModeBreakpoint: async (req, res) => {
     try {
-      const { windowId, breakpoint } = req.body;
+      const { windowId, breakpoints } = req.body;
       client.publish(
         topic,
         JSON.stringify({
           command: 'window-control-change-breakpoint',
-          breakpoint: breakpoint,
+          breakpoints: breakpoints,
           windowOrder:
             parseInt(windowId.slice(17, 19)) > 9
               ? parseInt(windowId.slice(-2))
@@ -294,15 +292,15 @@ const windowController = {
           } else {
             console.log({
               result: 'success',
-              message: `Yêu cầu window-control-change-breakpoint: ${breakpoint}: ${windowId} đã được gửi`,
+              message: `Yêu cầu window-control-change-breakpoint: ${breakpoints}: ${windowId} đã được gửi`,
             });
           }
         },
       );
-      await Window.findOneAndUpdate({ windowId: windowId }, { breakpoint: breakpoint });
+      await Window.findOneAndUpdate({ windowId: windowId }, { breakpoints: breakpoints });
       res.status(200).send({
         result: 'success',
-        message: `Thay đổi breakpoint thành công: ${breakpoint}`,
+        message: `Thay đổi breakpoint thành công: ${breakpoints}`,
       });
     } catch (err) {
       return res.status(500).send({
@@ -363,6 +361,12 @@ const windowController = {
         parseInt(windowId.slice(17, 19)) > 9
           ? parseInt(windowId.slice(-2))
           : parseInt(windowId.slice(-1));
+      const window = req.window;
+      const distanceSensorOrder =
+        parseInt(window.distanceSensorId.slice(17, 19)) > 9
+          ? parseInt(window.distanceSensorId.slice(-2))
+          : parseInt(window.distanceSensorId.slice(-1));
+
       client.publish(
         topic,
         JSON.stringify({
@@ -392,12 +396,12 @@ const windowController = {
           roomId: room.roomId,
         },
         {
-          connect: removeExist(room.connect, windowOrder),
+          connect: removeExist(removeExist(room.connect, windowOrder), distanceSensorOrder),
         },
       );
       res.status(200).send({
         result: 'success',
-        message: `Xớa đèn thành công: ${windowId}`,
+        message: `Xớa cửa sổ thành công: ${windowId}`,
       });
     } catch (err) {
       return res.status(500).send({

@@ -116,7 +116,10 @@ const lampController = {
         {
           name: name,
         },
+        { new: true },
       );
+
+      console.log(lampAfter);
 
       res.status(200).send({
         result: 'success',
@@ -154,8 +157,8 @@ const lampController = {
               : parseInt(lampId.slice(-1)),
           roomId:
             parseInt(lampId.slice(17, 19)) > 9
-              ? lampId.slice(0, plantId.length - 2)
-              : lampId.slice(0, plantId.length - 1),
+              ? lampId.slice(0, lampId.length - 2)
+              : lampId.slice(0, lampId.length - 1),
         }),
         (err) => {
           if (err) {
@@ -207,8 +210,8 @@ const lampController = {
               : parseInt(lampId.slice(-1)),
           roomId:
             parseInt(lampId.slice(17, 19)) > 9
-              ? lampId.slice(0, plantId.length - 2)
-              : lampId.slice(0, plantId.length - 1),
+              ? lampId.slice(0, lampId.length - 2)
+              : lampId.slice(0, lampId.length - 1),
         }),
         (err) => {
           if (err) {
@@ -252,8 +255,8 @@ const lampController = {
               : parseInt(lampId.slice(-1)),
           roomId:
             parseInt(lampId.slice(17, 19)) > 9
-              ? lampId.slice(0, plantId.length - 2)
-              : lampId.slice(0, plantId.length - 1),
+              ? lampId.slice(0, lampId.length - 2)
+              : lampId.slice(0, lampId.length - 1),
         }),
         (err) => {
           if (err) {
@@ -296,8 +299,8 @@ const lampController = {
               : parseInt(lampId.slice(-1)),
           roomId:
             parseInt(lampId.slice(17, 19)) > 9
-              ? lampId.slice(0, plantId.length - 2)
-              : lampId.slice(0, plantId.length - 1),
+              ? lampId.slice(0, lampId.length - 2)
+              : lampId.slice(0, lampId.length - 1),
         }),
         (err) => {
           if (err) {

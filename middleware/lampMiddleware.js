@@ -20,8 +20,8 @@ const lamp = async (req, res, next) => {
 
     const roomId =
       parseInt(lampId.slice(17, 19)) > 9
-        ? lampId.slice(0, plantId.length - 2)
-        : lampId.slice(0, plantId.length - 1);
+        ? lampId.slice(0, lampId.length - 2)
+        : lampId.slice(0, lampId.length - 1);
 
     const lamp = await Lamp.findOne({
       lampId: lampId,

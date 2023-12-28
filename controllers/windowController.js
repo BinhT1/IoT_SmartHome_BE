@@ -238,8 +238,8 @@ const windowController = {
               : parseInt(windowId.slice(-1)),
           roomId:
             parseInt(windowId.slice(17, 19)) > 9
-              ? windowId.slice(0, plantId.length - 2)
-              : windowId.slice(0, plantId.length - 1),
+              ? windowId.slice(0, windowId.length - 2)
+              : windowId.slice(0, windowId.length - 1),
         }),
         (err) => {
           if (err) {
@@ -282,8 +282,8 @@ const windowController = {
               : parseInt(windowId.slice(-1)),
           roomId:
             parseInt(windowId.slice(17, 19)) > 9
-              ? windowId.slice(0, plantId.length - 2)
-              : windowId.slice(0, plantId.length - 1),
+              ? windowId.slice(0, windowId.length - 2)
+              : windowId.slice(0, windowId.length - 1),
         }),
         (err) => {
           if (err) {
@@ -325,8 +325,8 @@ const windowController = {
               : parseInt(windowId.slice(-1)),
           roomId:
             parseInt(windowId.slice(17, 19)) > 9
-              ? windowId.slice(0, plantId.length - 2)
-              : windowId.slice(0, plantId.length - 1),
+              ? windowId.slice(0, windowId.length - 2)
+              : windowId.slice(0, windowId.length - 1),
         }),
         (err) => {
           if (err) {

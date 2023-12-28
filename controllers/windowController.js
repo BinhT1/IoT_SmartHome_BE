@@ -2,7 +2,7 @@ const mqtt = require('mqtt');
 const Window = require('../models/Window');
 const Room = require('../models/Room');
 const { removeExist, isObjectEmpty } = require('../utils');
-const broker = 'mqtt://broker.mqttdashboard.com:1883';
+const broker = 'mqtt://broker.emqx.io:1883';
 const options = {};
 const topic = 'BINH.NB194231_SERVER';
 

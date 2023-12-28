@@ -16,12 +16,15 @@ const connectMQTTAndSubcribe = (topic) => {
       client.subscribe(topic);
     });
     client.on('message', (tp, msg) => {
-      console.log(msg);
-      var data = JSON.parse(msg);
+      console.log(msg); // type bytesbuffer
+
+      const msgStr = new Buffer.from(msg).toString('ascii');
+
+      var data = JSON.parse(msgStr);
 
       console.log('Received MQTT msg: ', data);
 
-      updateData(data);
+      // updateData(data);
 
       connections.forEach((connect) => {
         connect.sendUTF(JSON.stringify(data));

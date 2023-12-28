@@ -3,7 +3,7 @@ const Lamp = require('../models/Lamp');
 const Room = require('../models/Room');
 const { removeExist } = require('../utils');
 const lamp = require('../middleware/lampMiddleware');
-const broker = 'mqtt://broker.mqttdashboard.com:1883';
+const broker = 'mqtt://broker.emqx.io:1883';
 const options = {};
 const topic = 'BINH.NB194231_SERVER';
 

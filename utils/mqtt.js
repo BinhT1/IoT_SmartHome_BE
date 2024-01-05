@@ -18,7 +18,7 @@ const connectMQTTAndSubcribe = (topic) => {
     client.on('message', (tp, msg) => {
       console.log(msg); // type bytesbuffer
 
-      const msgStr = new Buffer.from(msg).toString('ascii');
+      const msgStr = new Buffer.from(msg).toString('utf8');
 
       var data = JSON.parse(msgStr);
 

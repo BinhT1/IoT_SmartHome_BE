@@ -25,6 +25,6 @@ router.post('/api/v1/lamp/change-breakpoint', auth, lamp, lampController.changeA
 router.post('/api/v1/lamp/change-timers', auth, lamp, lampController.changeTimers);
 
 //delete lamp
-router.delete('/api/v1/lamp/delete', auth, lamp, lampController.delete);
+router.post('/api/v1/lamp/delete', auth, lamp, lampController.delete);
 
 module.exports = router;

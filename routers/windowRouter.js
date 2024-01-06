@@ -31,6 +31,6 @@ router.post(
 router.post('/api/v1/window/change-timers', auth, window, windowController.changeTimers);
 
 //delete window
-router.delete('/api/v1/window/delete', auth, window, windowController.delete);
+router.post('/api/v1/window/delete', auth, window, windowController.delete);
 
 module.exports = router;

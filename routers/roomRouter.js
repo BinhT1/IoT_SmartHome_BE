@@ -18,6 +18,6 @@ router.post('/api/v1/room/detail', auth, room, roomController.detail);
 router.put('/api/v1/room/update', auth, room, roomController.update);
 
 //delte
-router.delete('/api/v1/room/delete', auth, room, roomController.delete);
+router.post('/api/v1/room/delete', auth, room, roomController.delete);
 
 module.exports = router;

@@ -5,7 +5,8 @@ const { connections } = require('./websocket');
 
 const options = {};
 
-const broker = 'mqtt://broker.emqx.io:1883';
+// const broker = 'mqtt://broker.emqx.io:1883';
+const broker = 'mqtt://broker.mqttdashboard.com:1883';
 
 const connectMQTTAndSubcribe = (topic) => {
   try {

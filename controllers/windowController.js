@@ -11,7 +11,7 @@ const client = mqtt.connect(broker, options);
 const windowController = {
   create: async (req, res) => {
     try {
-      const { name, windowOrder, roomId, distanceSensorOrder, height } = req.body;
+      const { name, windowOrder, roomId, height } = req.body;
       console.log(typeof height);
       if (name == '' || isObjectEmpty(name) || isObjectEmpty(height) || height == 0) {
         return res.status(400).send({
@@ -22,13 +22,10 @@ const windowController = {
 
       const room = req.room;
 
-      const roomConnect = room.connect;
+      const roomConnect = room.connectedWindow;
 
       for (var i = 0; i < roomConnect.length; i++) {
-        if (
-          roomConnect[i] == windowOrder.toString() ||
-          roomConnect[i] == distanceSensorOrder.toString()
-        ) {
+        if (roomConnect[i] == windowOrder.toString()) {
           return res.status(400).send({
             result: 'fail',
             message: 'Chân cửa sổ hoặc sensor đã tồn tại',
@@ -39,7 +36,6 @@ const windowController = {
       const newWindow = new Window({
         roomId: roomId,
         windowId: roomId + windowOrder.toString(),
-        distanceSensorId: roomId + distanceSensorOrder.toString(),
         name: name,
         status: 0,
         height: height,
@@ -53,7 +49,6 @@ const windowController = {
         JSON.stringify({
           command: 'window-create',
           windownOrder: windowOrder,
-          distanceSensorOrder: distanceSensorOrder,
           roomId: roomId,
           height: height,
         }),
@@ -66,7 +61,7 @@ const windowController = {
           } else {
             console.log({
               result: 'success',
-              message: `Yêu cầu window-create: ${roomId} ${windowOrder} ${distanceSensorOrder} đã được gửi`,
+              message: `Yêu cầu window-create: ${roomId} ${windowOrder}  đã được gửi`,
             });
           }
         },
@@ -79,7 +74,7 @@ const windowController = {
           roomId: roomId,
         },
         {
-          connect: [...room.connect, windowOrder, distanceSensorOrder],
+          connectedWindow: [...room.connectedWindow, windowOrder],
         },
         {
           new: true,
@@ -361,11 +356,6 @@ const windowController = {
         parseInt(windowId.slice(17, 19)) > 9
           ? parseInt(windowId.slice(-2))
           : parseInt(windowId.slice(-1));
-      const window = req.window;
-      const distanceSensorOrder =
-        parseInt(window.distanceSensorId.slice(17, 19)) > 9
-          ? parseInt(window.distanceSensorId.slice(-2))
-          : parseInt(window.distanceSensorId.slice(-1));
 
       client.publish(
         topic,
@@ -396,7 +386,7 @@ const windowController = {
           roomId: room.roomId,
         },
         {
-          connect: removeExist(removeExist(room.connect, windowOrder), distanceSensorOrder),
+          connect: removeExist(room.connect, windowOrder),
         },
       );
       res.status(200).send({

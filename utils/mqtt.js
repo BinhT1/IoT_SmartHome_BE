@@ -25,7 +25,7 @@ const connectMQTTAndSubcribe = (topic) => {
 
       console.log('Received MQTT msg: ', data);
 
-      // updateData(data);
+      updateData(data);
 
       connections.forEach((connect) => {
         connect.sendUTF(JSON.stringify(data));

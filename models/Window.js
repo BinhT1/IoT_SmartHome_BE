@@ -8,11 +8,6 @@ const Window = new mongoose.Schema(
       unique: true,
     },
     roomId: String,
-    distanceSensorId: {
-      type: String,
-      require: true,
-      unique: true,
-    },
     name: {
       type: String,
       unique: true,

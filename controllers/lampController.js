@@ -17,7 +17,7 @@ const lampController = {
       const room = req.room;
 
       // check lampOrder exist
-      const roomConnect = room.connect;
+      const roomConnect = room.connectedLamp;
 
       var lamps = await Lamp.find({
         roomId: roomId,
@@ -35,7 +35,7 @@ const lampController = {
       }
 
       for (var i = 0; i < roomConnect.length; i++) {
-        if (roomConnect[i] == lampOrder.toString()) {
+        if (roomConnect[i] == lampOrder) {
           return res.status(400).send({
             result: 'fail',
             message: 'Chân đèn đã tồn tại',
@@ -82,7 +82,7 @@ const lampController = {
           roomId: roomId,
         },
         {
-          connect: [...room.connect, lampOrder],
+          connectedLamp: [...room.connectedLamp, lampOrder],
         },
       );
 
@@ -367,7 +367,7 @@ const lampController = {
           roomId: room.roomId,
         },
         {
-          connect: removeExist(room.connect, lampOrder),
+          connectedLamp: removeExist(room.connectedLamp, lampOrder),
         },
       );
       res.status(200).send({

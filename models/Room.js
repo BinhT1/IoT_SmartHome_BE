@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const Room = new mongoose.Schema(
   {
@@ -12,7 +12,8 @@ const Room = new mongoose.Schema(
       ref: 'user',
     },
     name: String,
-    connect: Array,
+    connectedLamp: [],
+    connectedWindow: [],
     humidity: Number,
     temperature: Number,
     lightIntensity: Number,
@@ -20,6 +21,6 @@ const Room = new mongoose.Schema(
   {
     timestamps: true,
   },
-)
+);
 
-module.exports = mongoose.model('room', Room)
+module.exports = mongoose.model('room', Room);

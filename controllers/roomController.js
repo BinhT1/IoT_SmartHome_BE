@@ -11,7 +11,7 @@ const roomController = {
 
       // check variable
       if (name == '' || roomId == '' || isObjectNull(name) || isObjectNull(roomId)) {
-        res.status(400).send({
+        return res.status(400).send({
           result: 'fail',
           message: 'thiếu name hoặc roomId',
         });

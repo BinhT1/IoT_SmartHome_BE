@@ -386,7 +386,7 @@ const windowController = {
           roomId: room.roomId,
         },
         {
-          connect: removeExist(room.connect, windowOrder),
+          connectedWindow: removeExist(room.connect, windowOrder),
         },
       );
       res.status(200).send({

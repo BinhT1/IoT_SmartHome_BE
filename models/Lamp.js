@@ -5,11 +5,9 @@ const Lamp = new mongoose.Schema(
     lampId: {
       type: String,
       require: true,
-      unique: true,
     },
     name: {
       type: String,
-      unique: true,
     },
     roomId: String,
     status: {

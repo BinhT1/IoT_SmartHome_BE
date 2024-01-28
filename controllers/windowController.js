@@ -20,6 +20,21 @@ const windowController = {
         });
       }
 
+      var windows = await Window.find({
+        roomId: roomId,
+      });
+
+      if (windows) {
+        for (const window of windows) {
+          if (window.name == name) {
+            return res.status(400).send({
+              result: 'fail',
+              message: 'Tên cửa sổ đã tồn tại',
+            });
+          }
+        }
+      }
+
       const room = req.room;
 
       const roomConnect = room.connectedWindow;
@@ -386,7 +401,7 @@ const windowController = {
           roomId: room.roomId,
         },
         {
-          connectedWindow: removeExist(room.connect, windowOrder),
+          connectedWindow: removeExist(room.connectedWindow, windowOrder),
         },
       );
       res.status(200).send({

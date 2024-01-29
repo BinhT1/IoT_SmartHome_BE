@@ -296,11 +296,11 @@ const lampController = {
         topic,
         JSON.stringify({
           command: 'lamp-control-change-timer',
-          timers: timers,
+          timers: timers.toString(),
           lampOrder:
             parseInt(lampId.slice(17, 19)) > 9
-              ? parseInt(lampId.slice(-2))
-              : parseInt(lampId.slice(-1)),
+              ? parseInt(lampId.slice(-2)).toString()
+              : parseInt(lampId.slice(-1)).toString(),
           roomId:
             parseInt(lampId.slice(17, 19)) > 9
               ? lampId.slice(0, lampId.length - 2)

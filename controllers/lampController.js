@@ -3,7 +3,7 @@ const Lamp = require('../models/Lamp');
 const Room = require('../models/Room');
 const { removeExist } = require('../utils');
 const lamp = require('../middleware/lampMiddleware');
-const broker = 'mqtt://broker.emqx.io:1883';
+const broker = 'mqtt://broker.mqttdashboard.com:1883';
 const options = {};
 const topic = 'BINH.NB194231_SERVER';
 
@@ -153,8 +153,8 @@ const lampController = {
           mode: mode,
           lampOrder:
             parseInt(lampId.slice(17, 19)) > 9
-              ? parseInt(lampId.slice(-2))
-              : parseInt(lampId.slice(-1)),
+              ? parseInt(lampId.slice(-2)).toString()
+              : parseInt(lampId.slice(-1)).toString(),
           roomId:
             parseInt(lampId.slice(17, 19)) > 9
               ? lampId.slice(0, lampId.length - 2)
@@ -206,8 +206,8 @@ const lampController = {
           control: control,
           lampOrder:
             parseInt(lampId.slice(17, 19)) > 9
-              ? parseInt(lampId.slice(-2))
-              : parseInt(lampId.slice(-1)),
+              ? parseInt(lampId.slice(-2)).toString()
+              : parseInt(lampId.slice(-1)).toString(),
           roomId:
             parseInt(lampId.slice(17, 19)) > 9
               ? lampId.slice(0, lampId.length - 2)
@@ -222,7 +222,11 @@ const lampController = {
           } else {
             console.log({
               result: 'success',
-              message: `Yêu cầu lamp-control-manual: ${control}: ${lampId} đã được gửi`,
+              message: `Yêu cầu lamp-control-manual: ${control}: ${
+                parseInt(lampId.slice(17, 19)) > 9
+                  ? parseInt(lampId.slice(-2))
+                  : parseInt(lampId.slice(-1))
+              } đã được gửi`,
             });
           }
         },
@@ -248,11 +252,11 @@ const lampController = {
         topic,
         JSON.stringify({
           command: 'lamp-control-change-breakpoint',
-          breakpoint: breakpoint,
+          breakpoint: breakpoint.toString(),
           lampOrder:
             parseInt(lampId.slice(17, 19)) > 9
-              ? parseInt(lampId.slice(-2))
-              : parseInt(lampId.slice(-1)),
+              ? parseInt(lampId.slice(-2)).toString()
+              : parseInt(lampId.slice(-1)).toString(),
           roomId:
             parseInt(lampId.slice(17, 19)) > 9
               ? lampId.slice(0, lampId.length - 2)

@@ -2,7 +2,7 @@ const mqtt = require('mqtt');
 const Window = require('../models/Window');
 const Room = require('../models/Room');
 const { removeExist, isObjectEmpty } = require('../utils');
-const broker = 'mqtt://broker.emqx.io:1883';
+const broker = 'mqtt://broker.mqttdashboard.com:1883';
 const options = {};
 const topic = 'BINH.NB194231_SERVER';
 
@@ -130,8 +130,8 @@ const windowController = {
             roomId: room.roomId,
             windownOrder: parseInt(
               parseInt(windowId.slice(17, 19)) > 9
-                ? parseInt(windowId.slice(-2))
-                : parseInt(windowId.slice(-1)),
+                ? parseInt(windowId.slice(-2)).toString()
+                : parseInt(windowId.slice(-1)).toString(),
             ),
             height: height,
           }),
@@ -189,13 +189,12 @@ const windowController = {
         topic,
         JSON.stringify({
           command: 'window-change-mode',
-          mode: mode,
+          mode: mode.toString(),
           roomId: room.roomId,
-          windownOrder: parseInt(
+          windownOrder:
             parseInt(windowId.slice(17, 19)) > 9
-              ? parseInt(windowId.slice(-2))
-              : parseInt(windowId.slice(-1)),
-          ),
+              ? parseInt(windowId.slice(-2)).toString()
+              : parseInt(windowId.slice(-1)).toString(),
         }),
         (err) => {
           if (err) {
@@ -239,11 +238,11 @@ const windowController = {
         topic,
         JSON.stringify({
           command: 'window-control-manual',
-          status: status,
+          status: status.toString(),
           windowOrder:
             parseInt(windowId.slice(17, 19)) > 9
-              ? parseInt(windowId.slice(-2))
-              : parseInt(windowId.slice(-1)),
+              ? parseInt(windowId.slice(-2)).toString()
+              : parseInt(windowId.slice(-1)).toString(),
           roomId:
             parseInt(windowId.slice(17, 19)) > 9
               ? windowId.slice(0, windowId.length - 2)
@@ -283,11 +282,11 @@ const windowController = {
         topic,
         JSON.stringify({
           command: 'window-control-change-breakpoint',
-          breakpoints: breakpoints,
+          breakpoints: breakpoints.toString(),
           windowOrder:
             parseInt(windowId.slice(17, 19)) > 9
-              ? parseInt(windowId.slice(-2))
-              : parseInt(windowId.slice(-1)),
+              ? parseInt(windowId.slice(-2)).toString()
+              : parseInt(windowId.slice(-1)).toString(),
           roomId:
             parseInt(windowId.slice(17, 19)) > 9
               ? windowId.slice(0, windowId.length - 2)

@@ -263,11 +263,16 @@ const windowController = {
   changeAutoModeBreakpoint: async (req, res) => {
     try {
       const { windowId, breakpoints } = req.body;
+      let tmpBreakpoint = req.body.breakpoints;
+      tmpBreakpoint.sort(
+        (a, b) =>
+          parseInt(a.substring(0, a.indexOf('-'))) - parseInt(b.substring(0, b.indexOf('-'))),
+      );
       client.publish(
         topic,
         JSON.stringify({
           command: 'window-control-change-breakpoint',
-          breakpoints: breakpoints.toString(),
+          breakpoints: tmpBreakpoint.toString(),
           windowOrder:
             parseInt(windowId.slice(17, 19)) > 9
               ? parseInt(windowId.slice(-2)).toString()
@@ -294,7 +299,7 @@ const windowController = {
       await Window.findOneAndUpdate({ windowId: windowId }, { breakpoints: breakpoints });
       res.status(200).send({
         result: 'success',
-        message: `Thay đổi breakpoint thành công: ${breakpoints}`,
+        message: `Thay đổi breakpoint thành công: ${tmpBreakpoint}`,
       });
     } catch (err) {
       return res.status(500).send({
@@ -310,11 +315,11 @@ const windowController = {
         topic,
         JSON.stringify({
           command: 'window-control-change-timer',
-          timers: timers,
+          timers: timers.toString(),
           windowOrder:
             parseInt(windowId.slice(17, 19)) > 9
-              ? parseInt(windowId.slice(-2))
-              : parseInt(windowId.slice(-1)),
+              ? parseInt(windowId.slice(-2)).toString()
+              : parseInt(windowId.slice(-1)).toString(),
           roomId:
             parseInt(windowId.slice(17, 19)) > 9
               ? windowId.slice(0, windowId.length - 2)
@@ -360,7 +365,7 @@ const windowController = {
         topic,
         JSON.stringify({
           command: 'window-delete',
-          windowOrder: windowOrder,
+          windowOrder: windowOrder.toString(),
           roomId: room.roomId,
         }),
         (err) => {

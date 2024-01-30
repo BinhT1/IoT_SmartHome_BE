@@ -330,7 +330,7 @@ const lampController = {
         topic,
         JSON.stringify({
           command: 'lamp-delete',
-          lampOrder: lampOrder,
+          lampOrder: lampOrder.toString(),
           roomId: room.roomId,
         }),
         (err) => {

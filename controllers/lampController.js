@@ -16,23 +16,7 @@ const lampController = {
 
       const room = req.room;
 
-      // check lampOrder exist
       const roomConnect = room.connectedLamp;
-
-      var lamps = await Lamp.find({
-        roomId: roomId,
-      });
-
-      if (lamps) {
-        for (const lamp of lamps) {
-          if (lamp.name == name) {
-            return res.status(400).send({
-              result: 'fail',
-              message: 'Tên đèn đã tồn tại',
-            });
-          }
-        }
-      }
 
       for (var i = 0; i < roomConnect.length; i++) {
         if (roomConnect[i] == lampOrder) {
@@ -50,7 +34,7 @@ const lampController = {
         status: false,
         mode: 'manual',
         timerMode: [],
-        autoMode: -1,
+        breakpoint: 0,
       });
 
       client.publish(

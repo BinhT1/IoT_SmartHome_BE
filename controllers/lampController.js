@@ -203,7 +203,7 @@ const lampController = {
         topic,
         JSON.stringify({
           command: 'lamp-control-manual',
-          control: control,
+          control: control.toString(),
           lampOrder:
             parseInt(lampId.slice(17, 19)) > 9
               ? parseInt(lampId.slice(-2)).toString()

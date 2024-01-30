@@ -144,6 +144,10 @@ const roomController = {
 
       await Room.findOneAndDelete({ roomId: roomId });
 
+      await Lamp.deleteMany({ roomId: roomId });
+
+      await Window.deleteMany({ roomId: roomId });
+
       return res.send({
         result: 'success',
       });
